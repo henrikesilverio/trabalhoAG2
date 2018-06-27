@@ -60,12 +60,25 @@ def WFS(grafo, verticeInicial):
     fila.append(verticeInicial)
     while(len(fila) != 0):
         vertice = fila.pop(0)
-        for key in vertice["adjacentes"].keys():
-            if grafo[key]["cor"] == "branco":
-                grafo[key]["cor"] = "cinza"
-                grafo[key]["predecessor"] = vertice
-                fila.append(grafo[key])
+        for adjacente in vertice["adjacentes"].keys():
+            valor = grafo[vertice["nome"]]["adjacentes"][adjacente]
+            if grafo[adjacente]["cor"] == "branco" and valor != 0:
+                grafo[adjacente]["cor"] = "cinza"
+                grafo[adjacente]["predecessor"] = vertice
+                fila.append(grafo[adjacente])
         vertice["cor"] = "preto"
 
 
-# WFS(grafo, grafo[fonte])
+def ImprimirCaminho(verticeInicial, verticeFinal):
+    if verticeFinal["nome"] == verticeInicial["nome"]:
+        print(verticeInicial["nome"])
+    elif not verticeFinal["predecessor"]:
+        print("não existe caminho de {0} a {1}".format(
+            verticeInicial["nome"], verticeFinal["nome"]))
+    else:
+        ImprimirCaminho(verticeInicial, verticeFinal["predecessor"])
+        print(verticeFinal["nome"])
+
+
+WFS(grafo, grafo[fonte])
+ImprimirCaminho(grafo[fonte], grafo[sumidouro])
