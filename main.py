@@ -51,7 +51,6 @@ criarGrafo(linhas)
 incluiArestaDeAvanco(grafo)
 
 # Busca em largura
-# Calcular a distancia entre dois vertices
 
 
 def WFS(grafo, verticeInicial):
@@ -68,17 +67,47 @@ def WFS(grafo, verticeInicial):
                 fila.append(grafo[adjacente])
         vertice["cor"] = "preto"
 
-
-def ImprimirCaminho(verticeInicial, verticeFinal):
-    if verticeFinal["nome"] == verticeInicial["nome"]:
-        print(verticeInicial["nome"])
-    elif not verticeFinal["predecessor"]:
-        print("não existe caminho de {0} a {1}".format(
-            verticeInicial["nome"], verticeFinal["nome"]))
-    else:
-        ImprimirCaminho(verticeInicial, verticeFinal["predecessor"])
-        print(verticeFinal["nome"])
+# funções auxiliares
 
 
-WFS(grafo, grafo[fonte])
-ImprimirCaminho(grafo[fonte], grafo[sumidouro])
+def ObtemCaminho():
+    caminho = []
+    vertice = grafo[sumidouro]
+    while(vertice):
+        caminho.insert(0, vertice["nome"])
+        vertice = vertice["predecessor"]
+    return caminho
+
+
+def ObtemGargalo(caminho):
+    gargalo = 99999999999999
+    for i in range(len(caminho) - 1):
+        capacidade = grafo[caminho[i]]["adjacentes"][caminho[i + 1]]
+        if capacidade < gargalo:
+            gargalo = capacidade
+    return gargalo
+
+
+def LimpaGrafo():
+    for vertice in grafo:
+        grafo[vertice]["cor"] = "branco"
+        grafo[vertice]["predecessor"] = {}
+
+# Algorito de fluxo
+
+
+def Fluxo():
+    WFS(grafo, grafo[fonte])
+    caminho = ObtemCaminho()
+    while(len(caminho) > 1):
+        gargalo = ObtemGargalo(caminho)
+        for i in range(len(caminho) - 1):
+            # Fonte -> Sumidouro
+            grafo[caminho[i]]["adjacentes"][caminho[i + 1]] -= gargalo
+            # Sumidouro -> Fonte
+            grafo[caminho[i + 1]]["adjacentes"][caminho[i]] += gargalo
+        LimpaGrafo()
+        WFS(grafo, grafo[fonte])
+        caminho = ObtemCaminho()
+
+Fluxo()
