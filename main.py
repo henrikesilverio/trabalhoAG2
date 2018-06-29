@@ -1,11 +1,11 @@
-arquivo = open("exemplo1.txt")
+arquivo = open("exemplo3.txt")
 
 linhas = arquivo.read().split("\n")
 definicoes = linhas[0].split(' ')
 linhas = linhas[1:]
 
-fonte = definicoes[0]
-sumidouro = definicoes[1]
+fonte = definicoes[2]
+sumidouro = definicoes[3]
 arquivo.close()
 grafo = {}
 grafo[fonte] = {
@@ -53,7 +53,7 @@ incluiArestaDeAvanco(grafo)
 # Busca em largura
 
 
-def WFS(grafo, verticeInicial):
+def buscaEmLargura(grafo, verticeInicial):
     fila = []
     verticeInicial["cor"] = "cinza"
     fila.append(verticeInicial)
@@ -70,7 +70,7 @@ def WFS(grafo, verticeInicial):
 # funções auxiliares
 
 
-def ObtemCaminho():
+def obtemCaminho():
     caminho = []
     vertice = grafo[sumidouro]
     while(vertice):
@@ -79,7 +79,7 @@ def ObtemCaminho():
     return caminho
 
 
-def ObtemGargalo(caminho):
+def obtemGargalo(caminho):
     gargalo = 99999999999999
     for i in range(len(caminho) - 1):
         capacidade = grafo[caminho[i]]["adjacentes"][caminho[i + 1]]
@@ -88,7 +88,7 @@ def ObtemGargalo(caminho):
     return gargalo
 
 
-def LimpaGrafo():
+def limpaGrafo():
     for vertice in grafo:
         grafo[vertice]["cor"] = "branco"
         grafo[vertice]["predecessor"] = {}
@@ -96,18 +96,23 @@ def LimpaGrafo():
 # Algorito de fluxo
 
 
-def Fluxo():
-    WFS(grafo, grafo[fonte])
-    caminho = ObtemCaminho()
+def fluxoMaximo():
+    buscaEmLargura(grafo, grafo[fonte])
+    caminho = obtemCaminho()
+    maximo = 0
     while(len(caminho) > 1):
-        gargalo = ObtemGargalo(caminho)
+        gargalo = obtemGargalo(caminho)
         for i in range(len(caminho) - 1):
             # Fonte -> Sumidouro
             grafo[caminho[i]]["adjacentes"][caminho[i + 1]] -= gargalo
             # Sumidouro -> Fonte
             grafo[caminho[i + 1]]["adjacentes"][caminho[i]] += gargalo
-        LimpaGrafo()
-        WFS(grafo, grafo[fonte])
-        caminho = ObtemCaminho()
+        limpaGrafo()
+        buscaEmLargura(grafo, grafo[fonte])
+        caminho = obtemCaminho()
+    for vertice in grafo[sumidouro]["adjacentes"].keys():
+        maximo += grafo[sumidouro]["adjacentes"][vertice]
+    return maximo
 
-Fluxo()
+
+print(fluxoMaximo())

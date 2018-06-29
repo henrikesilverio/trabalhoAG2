@@ -1,0 +1,12 @@
+7 11 S T
+S A 40
+S B 40
+A C 10
+A D 10
+B C 10
+B E 20
+C D 20
+C E 10
+C T 10
+D T 30
+E T 20
