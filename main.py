@@ -1,4 +1,4 @@
-arquivo = open("exemplo3.txt")
+arquivo = open("exemplo4.txt")
 
 linhas = arquivo.read().split("\n")
 definicoes = linhas[0].split(' ')
@@ -26,21 +26,37 @@ grafo[sumidouro] = {
 
 def criarGrafo(linhas):
     for linha in linhas:
-        vertices = linha.split(' ')
-        if vertices[0] in grafo and type(grafo[vertices[0]]) is dict:
-            grafo[vertices[0]]["adjacentes"][vertices[1]] = int(vertices[2])
+        aresta = linha.split(' ')
+        if aresta[0] in grafo and type(grafo[aresta[0]]) is dict:
+            grafo[aresta[0]]["adjacentes"][aresta[1]] = int(aresta[2])
         else:
-            grafo[vertices[0]] = {
-                "nome": vertices[0],
+            grafo[aresta[0]] = {
+                "nome": aresta[0],
                 "cor": "branco",
-                "adjacentes": {vertices[1]: int(vertices[2])},
+                "adjacentes": {aresta[1]: int(aresta[2])},
                 "predecessor": {}
             }
 
-# Inclui arestas de avanço
+# Inclui vertices separadores e arestas de avanço
 
 
-def incluiArestaDeAvanco(grafo):
+def incluiVerticeSeparador():
+    for vertice in grafo.copy().keys():
+        for adjacente in grafo[vertice]["adjacentes"].keys():
+            adjacentes = grafo[adjacente]["adjacentes"]
+            if vertice in adjacentes and adjacentes[vertice] > 0:
+                valor = int(grafo[adjacente]["adjacentes"][vertice])
+                grafo[adjacente + vertice] = {
+                    "nome": adjacente + vertice,
+                    "cor": "branco",
+                    "adjacentes": {vertice: valor},
+                    "predecessor": {}
+                }
+                grafo[adjacente]["adjacentes"][adjacente + vertice] = valor
+                del grafo[adjacente]["adjacentes"][vertice]
+
+
+def incluiArestaDeAvanco():
     for vertice in grafo.keys():
         for adjacente in grafo[vertice]["adjacentes"].keys():
             if not vertice in grafo[adjacente]["adjacentes"]:
@@ -48,7 +64,8 @@ def incluiArestaDeAvanco(grafo):
 
 
 criarGrafo(linhas)
-incluiArestaDeAvanco(grafo)
+incluiVerticeSeparador()
+incluiArestaDeAvanco()
 
 # Busca em largura
 

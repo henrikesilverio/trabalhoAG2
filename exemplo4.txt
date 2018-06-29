@@ -1,0 +1,11 @@
+6 10 S T
+S W 16
+S X 13
+W X 10
+W Y 12
+X W 4
+X Z 14
+Y X 9
+Y T 20
+Z Y 7
+Z T 4
